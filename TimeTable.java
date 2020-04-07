@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.*;
 
 public class TimeTable {
-    public static void GenerateTable(int arr[][],int nos,String day[], String fac_name[],int freeLectures){
+    public static void GenerateTable(int arr[][],int nos,String day[], String fac_name[],int freeLectures,int labs){
         int k=0;
         Random r = new Random();
 
@@ -13,7 +13,7 @@ public class TimeTable {
             hashmap.put(id,fac_name[i]);
             id++;
         }
-        System.out.println(hashmap);
+
         //Timetable Generates from here
         while(k<6) {
             int count=0;
@@ -35,7 +35,7 @@ public class TimeTable {
                             i--;
                         }
                     } else {
-                        if (random == 0 && count < freeLectures && count != freeLectures) {
+                        if (random == 0 && count < freeLectures) {
                             arrayList.add(random);
                             count++;
                         } else {
@@ -43,22 +43,40 @@ public class TimeTable {
                         }
                     }
                 }
+            }
 
+            if(labs!=0){
+                for(int i=nos ; i<nos+labs ; i++){
+                    int random=r.nextInt(nos+1);
+                    arrayList.add(random);
+                }
             }
 
             //System.out.println("ArrayList: "+arrayList);
-            for(int j=0 ; j<nos ; j++){
-                arr[k][j] = arrayList.get(j);
+            for(int j=0 ; j<nos+labs ; j++){
+                if(arrayList.get(j)!=null) {
+                    arr[k][j] = arrayList.get(j);
+                }else {
+                    arr[k][j]=0;
+                }
             }
             k++;
         }
 
+        printTable(day,arr,hashmap,nos,labs);
+
+    }
+
+    public static void printTable(String day[],int arr[][],HashMap hashmap, int nos,int labs){
         //Printing TimeTable
         for(int i=0 ; i<6 ; i++){
             System.out.print(day[i]+" ");
-            for(int j=0 ; j<nos ; j++){
-//                System.out.print(arr[i][j]+" ");
-                System.out.format(hashmap.get(arr[i][j])+"\t");
+            for(int j=0 ; j<nos+labs ; j++){
+                System.out.print(hashmap.get(arr[i][j]));
+                if(j>=nos && arr[i][j]!=0){
+                    System.out.print(" Lab");
+                }
+                System.out.print("\t");
             }
             System.out.println();
         }
@@ -85,18 +103,21 @@ public class TimeTable {
         //nos = nos+1;
 
         String fac_name[] = new String[nos];
-        int A[][] = new int[6][nos];
 
         //Giving Id to teacher
         System.out.println("Enter  name  of  faculty  with  assigned  subject in the format name_of_faculty(Subject name) :");
 
         for(i=0 ; i<nos ; i-=-1){
-//            System.out.println("i is "+i);
             fac_name[i]=sc.next();
         }
 
         System.out.println("Enter Maximum Number of Free Lectures to be Given :");
         int freeLectures=sc.nextInt();
-        GenerateTable(A,nos,day,fac_name,freeLectures);
+
+        System.out.println("Enter Maximum Number of Labs : ");
+        int labs=sc.nextInt();
+
+        int A[][] = new int[6][nos+labs];
+        GenerateTable(A,nos,day,fac_name,freeLectures,labs);
     }
 }
